@@ -138,6 +138,8 @@ void SYS_Initialize ( void* data )
 
 
 
+    QSPI_Initialize();
+
     EVSYS_Initialize();
 
     TC0_TimerInitialize();

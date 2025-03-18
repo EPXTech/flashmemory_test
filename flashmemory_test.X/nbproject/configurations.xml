@@ -25,6 +25,10 @@
             <logicalFolder name="port" displayName="port" projectFiles="true">
               <itemPath>../src/config/default/peripheral/port/plib_port.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="qspi" displayName="qspi" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/qspi/plib_qspi_common.h</itemPath>
+              <itemPath>../src/config/default/peripheral/qspi/plib_qspi.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="tc" displayName="tc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/tc/plib_tc0.h</itemPath>
               <itemPath>../src/config/default/peripheral/tc/plib_tc_common.h</itemPath>
@@ -210,6 +214,9 @@
             </logicalFolder>
             <logicalFolder name="port" displayName="port" projectFiles="true">
               <itemPath>../src/config/default/peripheral/port/plib_port.c</itemPath>
+            </logicalFolder>
+            <logicalFolder name="qspi" displayName="qspi" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/qspi/plib_qspi.c</itemPath>
             </logicalFolder>
             <logicalFolder name="tc" displayName="tc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/tc/plib_tc0.c</itemPath>
