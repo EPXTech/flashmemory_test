@@ -171,9 +171,21 @@ void CLOCK_Initialize (void)
 
     /* Configure the APBA Bridge Clocks */
     MCLK_REGS->MCLK_APBAMASK = 0x47ffU;
+    
+    /* Enable QSPI GCLK  */
+    GCLK_REGS->GCLK_GENCTRL[3] = GCLK_GENCTRL_SRC_DFLL |
+                                 GCLK_GENCTRL_GENEN_Msk |
+                                 GCLK_GENCTRL_DIV(3);
+    
+    GCLK_REGS->GCLK_PCHCTRL[39] = GCLK_PCHCTRL_GEN(3) | GCLK_PCHCTRL_CHEN_Msk;
 
+    while ((GCLK_REGS->GCLK_PCHCTRL[39] & GCLK_PCHCTRL_CHEN_Msk) != GCLK_PCHCTRL_CHEN_Msk)
+    {
+        /* Wait for synchronization */
+    }
     /* Configure the APBB Bridge Clocks */
     MCLK_REGS->MCLK_APBBMASK = 0x18256U;
 
+    MCLK_REGS->MCLK_AHBMASK |= MCLK_AHBMASK_QSPI_2X_Msk;
 
 }
