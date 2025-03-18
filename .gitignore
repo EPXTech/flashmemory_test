@@ -1,0 +1,100 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.elf
+*.hex
+*.eep
+*.lss
+*.a
+*.lib
+*.ph
+*.map
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Generated files
+*.dep
+*.d
+
+# MPLAB X generated files/folders
+nbproject/private/
+build/
+dist/
+*.X.production.hex
+*.X.production.bin
+*.X.debug.hex
+*.X.debug.bin
+
+# Directory for MPLAB Harmony files
+nbproject/HarmonyCache/
+
+# Backup & report files from coIDE
+*.codb
+*.crpt
+
+# Exclude Makefile
+Makefile
+
+# Exclude MPLAB X IDE settings
+*.psd
+*.psf
+*.mcp
+*.mcw
+
+# Exclude miscellaneous files
+*.cache
+*.log
+*.bak
+*.tmp
+*.save
+
+# Exclude J-Link GDB files
+.JLinkGDBServer.log
+
+# Exclude macOS specific files
+.DS_Store
+
+# Exclude Python compiled files
+*.pyc
+__pycache__/
+
+.vscode/
+
+**/.generated_files/*
+firmware/Anaconda.X/nbproject/private/private.xml
+
+firmware/Anaconda.X/nbproject/Makefile-genesis.properties
+
+firmware/Anaconda.X/Anaconda.mc3.bak1
+
+firmware/Anaconda.X/Anaconda.mc3.bak0
+
+test_scripts/.venv/
