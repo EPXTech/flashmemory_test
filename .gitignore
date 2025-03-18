@@ -98,3 +98,5 @@ firmware/Anaconda.X/Anaconda.mc3.bak1
 firmware/Anaconda.X/Anaconda.mc3.bak0
 
 test_scripts/.venv/
+
+flashmemory_test.X/nbproject/private/
