@@ -29,6 +29,12 @@
               <itemPath>../src/config/default/peripheral/qspi/plib_qspi_common.h</itemPath>
               <itemPath>../src/config/default/peripheral/qspi/plib_qspi.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="sercom" displayName="sercom" projectFiles="true">
+              <logicalFolder name="usart" displayName="usart" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/sercom/usart/plib_sercom_usart_common.h</itemPath>
+                <itemPath>../src/config/default/peripheral/sercom/usart/plib_sercom2_usart.h</itemPath>
+              </logicalFolder>
+            </logicalFolder>
             <logicalFolder name="tc" displayName="tc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/tc/plib_tc0.h</itemPath>
               <itemPath>../src/config/default/peripheral/tc/plib_tc_common.h</itemPath>
@@ -217,6 +223,11 @@
             </logicalFolder>
             <logicalFolder name="qspi" displayName="qspi" projectFiles="true">
               <itemPath>../src/config/default/peripheral/qspi/plib_qspi.c</itemPath>
+            </logicalFolder>
+            <logicalFolder name="sercom" displayName="sercom" projectFiles="true">
+              <logicalFolder name="usart" displayName="usart" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/sercom/usart/plib_sercom2_usart.c</itemPath>
+              </logicalFolder>
             </logicalFolder>
             <logicalFolder name="tc" displayName="tc" projectFiles="true">
               <itemPath>../src/config/default/peripheral/tc/plib_tc0.c</itemPath>
@@ -574,6 +585,8 @@
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-fffff"/>
         <property key="poweroptions.powerenable" value="true"/>
+        <property key="programmerToGoFilePath"
+                  value="C:/Users/SmartBeat/Documents/mplabx/flashmemory_test/flashmemory_test.X/debug/default/flashmemory_test_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.pgcconfig" value="pull down"/>

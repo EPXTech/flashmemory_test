@@ -140,6 +140,8 @@ void SYS_Initialize ( void* data )
 
     QSPI_Initialize();
 
+    SERCOM2_USART_Initialize();
+
     EVSYS_Initialize();
 
     TC0_TimerInitialize();
