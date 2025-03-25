@@ -56,10 +56,35 @@ void APP_Tasks(void)
     {
         case APP_STATE_INIT:
         {    
-            if (!verify_qspi_clocks()) break;
-            if (!verify_qspi_baud()) break;
-            
+            char logBuffer[128];  // Buffer to store log messages
+
+            if (!verify_qspi_clocks()) 
+            {
+                sprintf(logBuffer, "[ERROR] QSPI Clock verification failed!\r\n");
+                SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+            }
+            else 
+            {
+                sprintf(logBuffer, "[APP] QSPI Clocks verified successfully.\r\n");
+                SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+            }
+
+            if (!verify_qspi_baud()) 
+            {
+                sprintf(logBuffer, "[ERROR] QSPI Baud verification failed!\r\n");
+                SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+            }
+            else 
+            {
+                sprintf(logBuffer, "[APP] QSPI Baud rate verified successfully.\r\n");
+                SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+            }
+
+            sprintf(logBuffer, "[APP] Transitioning to RUNNING state.\r\n");
+            SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+
             appData.state = APP_STATE_RUNNING;
+            break;
         }
         case APP_STATE_RUNNING:
         {
