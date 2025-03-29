@@ -6,6 +6,12 @@ void toggle_user_led(){
     GPIO_PC18_Toggle();
 }
 
+/* bool verify_qspi_clocks() 
+ *  char logBuffer[128];
+ *  sprintf(logBuffer, verify_qspi_clocks() ? "[APP] QSPI Clocks verified successfully.\r\n" : "[ERROR] QSPI Clock verification failed!\r\n");
+ *  SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+ *  while (SERCOM2_USART_WriteIsBusy());
+ */
 bool verify_qspi_clocks()
 {
     // Read current clock settings
@@ -24,7 +30,13 @@ bool verify_qspi_clocks()
     return ahb_qspi_enabled && ahb_qspi2x_enabled && gclk_qspi_enabled;
     
 }
-
+/* 
+ * bool verify_qspi_baud()
+ * char logBuffer[128];  // Buffer to store log messages
+ * sprintf(logBuffer, verify_qspi_baud() ? "[APP] QSPI Baud rate verified successfully.\r\n" : "[ERROR] QSPI Baud verification failed!\r\n");
+ * SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+ * while (SERCOM2_USART_WriteIsBusy());
+*/
 bool verify_qspi_baud() {
     uint32_t qspi_baud = QSPI_REGS->QSPI_BAUD;
 
@@ -70,6 +82,13 @@ bool verify_qspi_registers()
     return valid;
 }
 
+/*
+ * bool verify_qspi_registers_verbose()
+ * char logBuffer[128];  // Buffer to store log messages            
+ * sprintf(logBuffer, verify_qspi_registers_verbose() ? "[APP] QSPI Register setup verified.\r\n" : "[ERROR] QSPI Register setup mismatch!\r\n");
+ * SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+ * while (SERCOM2_USART_WriteIsBusy());
+*/
 bool verify_qspi_registers_verbose()
 {
     bool valid = true;
@@ -127,22 +146,7 @@ void APP_Tasks(void)
     switch (appData.state)
     {
         case APP_STATE_INIT:
-        {    
-            char logBuffer[128];  // Buffer to store log messages
-            sprintf(logBuffer, verify_qspi_clocks() ? "[APP] QSPI Clocks verified successfully.\r\n" : "[ERROR] QSPI Clock verification failed!\r\n");
-            SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
-            while (SERCOM2_USART_WriteIsBusy());
-            sprintf(logBuffer, verify_qspi_baud() ? "[APP] QSPI Baud rate verified successfully.\r\n" : "[ERROR] QSPI Baud verification failed!\r\n");
-            SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
-            while (SERCOM2_USART_WriteIsBusy());
-            sprintf(logBuffer, verify_qspi_registers_verbose() ? "[APP] QSPI Register setup verified.\r\n" : "[ERROR] QSPI Register setup mismatch!\r\n");
-            SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
-            while (SERCOM2_USART_WriteIsBusy());
-            
-            
-            sprintf(logBuffer, "[APP] Transitioning to RUNNING state.\r\n");
-            SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
-
+        {
             appData.state = APP_STATE_RUNNING;
             break;
         }
@@ -158,7 +162,5 @@ void APP_Tasks(void)
         {
             break;
         }
-    }
-    
-    
+    }  
 }
