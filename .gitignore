@@ -100,3 +100,5 @@ firmware/Anaconda.X/Anaconda.mc3.bak0
 test_scripts/.venv/
 
 flashmemory_test.X/nbproject/private/
+
+flashmemory_test.X/queuelogs/debugtool.txt
