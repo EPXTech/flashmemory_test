@@ -10,6 +10,9 @@
 #define JEDEC_MEMORY_TYPE      0x02
 #define JEDEC_CAPACITY_ID      0x20
 
+/* QSPI Config */
+#define QSPI_DLYBS_VALUE 0x2
+
 /* Callbacks */
 void toggle_user_led(){
     GPIO_PC18_Toggle();
@@ -32,6 +35,7 @@ void sendJEDECRead(void)
     if (!success)
     {
         SERCOM2_USART_Write("[APP] QSPI JEDEC ID Read failed.\r\n", 36);
+        while(SERCOM2_USART_WriteIsBusy() == true);
         return;
     }
 
@@ -54,6 +58,7 @@ void sendJEDECRead(void)
     SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
     while (SERCOM2_USART_WriteIsBusy());
 }
+
 
 // --- Write Enable ---
 void qspi_memory_write_enable(void)
@@ -80,6 +85,16 @@ uint8_t qspi_read_status_register(void)
     return (uint8_t)(status & 0xFF);
 }
 
+// Log the current QSPI status register value to SERCOM2
+void log_qspi_status(void)
+{
+    uint8_t status = qspi_read_status_register();
+    char logBuffer[64];
+    sprintf(logBuffer, "[APP] QSPI Status Register: 0x%02X\r\n", status);
+    SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+    while (SERCOM2_USART_WriteIsBusy());
+}
+
 void qspi_wait_for_write_complete(void)
 {
     while (qspi_read_status_register() & 0x01)
@@ -94,7 +109,7 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
     if (length > PAGE_SIZE) length = PAGE_SIZE;
 
     qspi_memory_xfer_t writeXfer = {
-        .instruction = 0x12,               // Page Program with 4-byte address
+        .instruction = 0x02,               // (0x12) Page Program with 4-byte address
         .option = 0,
         .width = SINGLE_BIT_SPI,
         .addr_len = ADDRL_32_BIT,
@@ -106,8 +121,12 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
 
     qspi_memory_write_enable();
     SERCOM2_USART_Write("[APP] Writing page...\r\n", 24);
+    while(SERCOM2_USART_WriteIsBusy() == true);
     QSPI_MemoryWrite(&writeXfer, (uint32_t *)data, (uint32_t)length, address);
     qspi_wait_for_write_complete();
+    
+    // Log the QSPI status register after write completes.
+    log_qspi_status();
 }
 
 // --- Memory Read ---
@@ -125,6 +144,7 @@ void qspi_memory_read(uint32_t address, uint8_t *buffer, size_t length)
     };
 
     SERCOM2_USART_Write("[APP] Reading back...\r\n", 24);
+    while(SERCOM2_USART_WriteIsBusy() == true);
     QSPI_MemoryRead(&readXfer, (uint32_t *)buffer, (uint32_t)length, address);
 }
 
@@ -141,9 +161,11 @@ void qspi_erase_256k_sector(uint32_t address)
 
     qspi_memory_write_enable();
     SERCOM2_USART_Write("[APP] Erasing 256KB sector...\r\n", 32);
+    while(SERCOM2_USART_WriteIsBusy() == true);
     QSPI_CommandWrite(&eraseCmd, address);
     qspi_wait_for_write_complete();
     SERCOM2_USART_Write("[APP] Sector Erase Complete.\r\n", 32);
+    while(SERCOM2_USART_WriteIsBusy() == true);
 }
 
 // --- Main Test Function ---
@@ -162,10 +184,10 @@ void test_qspi_read_write(void)
     // Write one page
     qspi_memory_write_page(TEST_ADDRESS, writeData, PAGE_SIZE);
 
-    // Read back
+    // Read back the data
     qspi_memory_read(TEST_ADDRESS, readData, PAGE_SIZE);
 
-    // Verify
+    // Verify and log results
     bool match = memcmp(writeData, readData, PAGE_SIZE) == 0;
     if (!match)
     {
@@ -186,6 +208,7 @@ void test_qspi_read_write(void)
     while (SERCOM2_USART_WriteIsBusy());
 }
 
+
 APP_DATA appData;
 
 void APP_Initialize(void)
@@ -193,8 +216,12 @@ void APP_Initialize(void)
     // Initialize application state
     appData.state = APP_STATE_INIT;
     
+    /* Start Flashing LED */
     TC0_TimerCallbackRegister(toggle_user_led, 0);
     TC0_TimerStart();
+    
+    /* Configure QSPI SCK Delay */
+    QSPI_REGS->QSPI_BAUD = (QSPI_REGS->QSPI_BAUD & ~QSPI_BAUD_DLYBS_Msk) | QSPI_BAUD_DLYBS(QSPI_DLYBS_VALUE);
 }
 
 void APP_Tasks(void)
@@ -208,8 +235,11 @@ void APP_Tasks(void)
         }
         case APP_STATE_RUNNING:
         {
-            sendJEDECRead();
+//            sendJEDECRead();
             test_qspi_read_write();
+
+            // Optional delay if needed
+            for (volatile int i = 0; i < 30000000; i++) { __asm__ __volatile__("nop"); }
             break;
         }
         case APP_STATE_ERROR:
