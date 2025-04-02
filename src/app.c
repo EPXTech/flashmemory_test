@@ -144,7 +144,7 @@ void qspi_memory_read(uint32_t address, uint8_t *buffer, size_t length)
         .option_en = false,
         .option_len = OPTL_1_BIT,
         .continuous_read_en = false,
-        .dummy_cycles = 8
+        .dummy_cycles = 0
     };
 
     SERCOM2_USART_Write("[APP] Reading back...\r\n", 24);
