@@ -133,9 +133,9 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
 void qspi_memory_read(uint32_t address, uint8_t *buffer, size_t length)
 {
     qspi_memory_xfer_t readXfer = {
-        .instruction = 0x6C,               // Quad Output Read (4-byte address)
+        .instruction = 0x03,               // Normal Read command for single-bit mode
         .option = 0,
-        .width = QUAD_OUTPUT,
+        .width = SINGLE_BIT_SPI,           // Force single-bit transactions
         .addr_len = ADDRL_32_BIT,
         .option_en = false,
         .option_len = OPTL_1_BIT,
