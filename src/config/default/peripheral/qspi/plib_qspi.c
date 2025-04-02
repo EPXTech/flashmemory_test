@@ -61,7 +61,7 @@ void QSPI_Initialize(void)
     QSPI_REGS->QSPI_CTRLB = QSPI_CTRLB_MODE_MEMORY | QSPI_CTRLB_CSMODE_NORELOAD | QSPI_CTRLB_DATALEN(0x6U);
 
     // Set serial clock register
-    QSPI_REGS->QSPI_BAUD = (QSPI_BAUD_BAUD(1U))  ;
+    QSPI_REGS->QSPI_BAUD = (QSPI_BAUD_BAUD(119U))  ;
 
     // Enable the qspi Module
     QSPI_REGS->QSPI_CTRLA = QSPI_CTRLA_ENABLE_Msk;
