@@ -1,8 +1,14 @@
 #include "app.h"
 #include "definitions.h"
 
-#define QSPI_TEST_ADDRESS  0x000100
+/* Read/Write Macros */
+#define TEST_ADDRESS       0x00100000UL
 #define PAGE_SIZE          256
+
+/* JEDEC Values */
+#define JEDEC_MANUFACTURER_ID  0x01
+#define JEDEC_MEMORY_TYPE      0x02
+#define JEDEC_CAPACITY_ID      0x20
 
 /* Callbacks */
 void toggle_user_led(){
@@ -15,32 +21,55 @@ void sendJEDECRead(void)
     uint8_t jedecId[3];
     uint32_t rxWord = 0;
 
-    // Set up the JEDEC ID read transfer (0x9F command, no dummy cycles, single-bit SPI)
     qspi_register_xfer_t readJEDECId =
     {
-        .instruction = 0x9F,              // JEDEC ID Read opcode
-        .width = SINGLE_BIT_SPI,          // Standard SPI mode
-        .dummy_cycles = 0                 // No dummy cycles required for JEDEC ID
+        .instruction = 0x9F,
+        .width = SINGLE_BIT_SPI,
+        .dummy_cycles = 0
     };
 
-    // Perform the transfer (read 3 bytes into a 32-bit buffer)
     bool success = QSPI_RegisterRead(&readJEDECId, &rxWord, 3);
     if (!success)
     {
-        SERCOM2_USART_Write("[APP] QSPI JEDEC ID Read failed.\r\n", strlen("[APP] QSPI JEDEC ID Read failed.\r\n"));
+        SERCOM2_USART_Write("[APP] QSPI JEDEC ID Read failed.\r\n", 36);
         return;
     }
 
-    // Extract the 3 bytes from the 32-bit word
+    // Extract the 3 bytes
     jedecId[0] = (rxWord >> 0) & 0xFF;
     jedecId[1] = (rxWord >> 8) & 0xFF;
     jedecId[2] = (rxWord >> 16) & 0xFF;
 
-    // Format and print the result
+    // Compare with expected
+    bool match = (jedecId[0] == JEDEC_MANUFACTURER_ID) &&
+                 (jedecId[1] == JEDEC_MEMORY_TYPE) &&
+                 (jedecId[2] == JEDEC_CAPACITY_ID);
+
+    // Format and print result
     char logBuffer[64];
-    sprintf(logBuffer, "[APP] JEDEC ID: %02X %02X %02X\r\n", jedecId[0], jedecId[1], jedecId[2]);
+    sprintf(logBuffer, "[APP] JEDEC ID: %02X %02X %02X => %s\r\n",
+            jedecId[0], jedecId[1], jedecId[2],
+            match ? "PASS" : "FAIL");
+
     SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
     while (SERCOM2_USART_WriteIsBusy());
+}
+
+void qspi_erase_256k_sector(uint32_t address)
+{
+    qspi_command_xfer_t eraseCmd = {
+        .instruction = 0xDC,               // 256KB Sector Erase (4-byte command)
+        .width = SINGLE_BIT_SPI,
+        .addr_en = true,
+        .addr_len = ADDRL_32_BIT
+    };
+
+    qspi_memory_write_enable();
+    SERCOM2_USART_Write("[APP] Issuing 256KB Sector Erase...\r\n", 41);
+    QSPI_CommandWrite(&eraseCmd, address);
+    qspi_wait_for_write_complete();
+
+    SERCOM2_USART_Write("[APP] Sector Erase Complete.\r\n", 32);
 }
 
 // --- Write Enable ---
@@ -74,7 +103,7 @@ void qspi_wait_for_write_complete(void)
 {
     while (qspi_read_status_register() & 0x01)
     {
-        // Could add timeout or delay
+        
     }
 }
 
@@ -164,6 +193,7 @@ void APP_Tasks(void)
         case APP_STATE_RUNNING:
         {
             sendJEDECRead();
+            test_qspi_write_and_read();
             break;
         }
         case APP_STATE_ERROR:
