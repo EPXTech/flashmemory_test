@@ -136,23 +136,17 @@ void sendJEDECRead(void)
     QSPI_REGS->QSPI_INSTRADDR = 0x00000000;
 
     // Configure the instruction control register:
-    // - Set opcode to 0x9F (JEDEC ID read)
-    // - Set address length to 0, option length to 0, and dummy cycles to 0
-    QSPI_REGS->QSPI_INSTRCTRL =
-            QSPI_INSTRCTRL_OPCODE(0x9F)  |  // Opcode for JEDEC read
-            QSPI_INSTRCTRL_ADDRLEN_0     |  // No address bytes
-            QSPI_INSTRCTRL_OPTLEN_0      |  // No option field
-            QSPI_INSTRCTRL_DUMMYLEN(0);     // No dummy cycles
+    QSPI_REGS->QSPI_INSTRCTRL = QSPI_INSTRCTRL_INSTR(0x9F); // Opcode for JEDEC read
 
     // Configure the instruction frame register:
-    // - Use single-bit width for instruction/data (for now)
-    // - Enable the instruction and data phases
-    // - Set transfer type to READ
-    QSPI_REGS->QSPI_INSTRFRAME =
-            QSPI_INSTRFRAME_WIDTH_SINGLE_BIT |   // Single-bit transfers
-            QSPI_INSTRFRAME_INSTEN_Msk       |   // Enable instruction phase
-            QSPI_INSTRFRAME_DATAEN_Msk       |   // Enable data phase
-            QSPI_INSTRFRAME_TFRTYPE_READ;         // Read transfer
+    QSPI_REGS->QSPI_INSTRFRAME = QSPI_INSTRFRAME_WIDTH_SINGLE_BIT_SPI |
+                                 QSPI_INSTRFRAME_INSTREN(1) |
+                                 QSPI_INSTRFRAME_DATAEN(1) |
+                                 QSPI_INSTRFRAME_ADDRLEN(0) | 
+                                 QSPI_INSTRFRAME_OPTCODEEN(0) |
+                                 QSPI_INSTRFRAME_OPTCODELEN(0) |
+                                 QSPI_INSTRFRAME_DUMMYLEN(0) |
+                                 QSPI_INSTRFRAME_TFRTYPE_READ;
 
     // Trigger the transaction.
     // For instruction mode, you often need to "clock out" the result by writing dummy data.
@@ -177,8 +171,6 @@ void sendJEDECRead(void)
     SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
     while (SERCOM2_USART_WriteIsBusy());
 }
-
-
 
 APP_DATA appData;
 
