@@ -1472,7 +1472,7 @@
     &lt;/Attributes&gt;
     &lt;Values dnOrder=&quot;1&quot;&gt;
       &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;qspi&quot; value=&quot;66000000&quot;/&gt;
-      &lt;User dnOrder=&quot;1&quot; value=&quot;40000000&quot;/&gt;
+      &lt;User dnOrder=&quot;1&quot; value=&quot;10000000&quot;/&gt;
     &lt;/Values&gt;
   &lt;/qspi&gt;
 &lt;/qspi&gt;
@@ -1539,7 +1539,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;qspi&gt;
   &lt;qspi dnOrder=&quot;0&quot; id=&quot;QSPI_SCBR&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;qspi&quot; value=&quot;2&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;qspi&quot; value=&quot;11&quot;/&gt;
     &lt;/Values&gt;
   &lt;/qspi&gt;
 &lt;/qspi&gt;
@@ -3393,7 +3393,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\definitions.h</file>
-         <hash>c29eba39d74540081e5141f4bbbea17101de08fc85a2250735e215a53a3e7245</hash>
+         <hash>1c69f322ed2242ddfd6a246a34411ea63e325108651724b02110eeaf1e70a32e</hash>
       </entry>
       <entry>
          <file>..\src\config\default\device.h</file>
@@ -3477,7 +3477,7 @@
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\qspi\plib_qspi.c</file>
-         <hash>26b2d4e9249897242e799a4d7425fcacaeb73ab65036f32b7c63ce4c1b511c01</hash>
+         <hash>9398afd33387011ca1fa346f7d65845f6d34b567b8c777bbcc9d761f7e6990b2</hash>
       </entry>
       <entry>
          <file>..\src\config\default\peripheral\qspi\plib_qspi.h</file>

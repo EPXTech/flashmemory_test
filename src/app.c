@@ -67,7 +67,7 @@ void qspi_memory_write_enable(void)
         .instruction = 0x06,              // Write Enable
         .width = SINGLE_BIT_SPI,
         .addr_en = false,
-        .addr_len = ADDRL_32_BIT
+        .addr_len = ADDRL_24_BIT
     };
     QSPI_CommandWrite(&cmd, 0);
 }
@@ -112,7 +112,7 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
         .instruction = 0x02,               // (0x12) Page Program with 4-byte address
         .option = 0,
         .width = SINGLE_BIT_SPI,
-        .addr_len = ADDRL_32_BIT,
+        .addr_len = ADDRL_24_BIT,
         .option_en = false,
         .option_len = OPTL_1_BIT,
         .continuous_read_en = false,
@@ -140,7 +140,7 @@ void qspi_memory_read(uint32_t address, uint8_t *buffer, size_t length)
         .instruction = 0x03,               // Normal Read command for single-bit mode
         .option = 0,
         .width = SINGLE_BIT_SPI,           // Force single-bit transactions
-        .addr_len = ADDRL_32_BIT,
+        .addr_len = ADDRL_24_BIT,
         .option_en = false,
         .option_len = OPTL_1_BIT,
         .continuous_read_en = false,
@@ -160,7 +160,7 @@ void qspi_erase_256k_sector(uint32_t address)
         .instruction = 0xDC,               // 256KB Erase in 4-byte mode
         .width = SINGLE_BIT_SPI,
         .addr_en = true,
-        .addr_len = ADDRL_32_BIT
+        .addr_len = ADDRL_24_BIT
     };
 
     qspi_memory_write_enable();
@@ -178,9 +178,11 @@ void test_qspi_read_write(void)
     uint8_t writeData[PAGE_SIZE], readData[PAGE_SIZE];
     char logBuffer[128];
 
-    // Fill test pattern
+    // Fill test pattern: start at 0x3C, increment by 4 for each byte.
     for (uint16_t i = 0; i < PAGE_SIZE; i++)
-        writeData[i] = (i ^ 0x3C) & 0xFF;
+    {
+        writeData[i] = (0x3C + 4 * i) & 0xFF;
+    }
 
     // Erase target sector first
     qspi_erase_256k_sector(TEST_ADDRESS);
@@ -193,16 +195,26 @@ void test_qspi_read_write(void)
 
     // Verify and log results
     bool match = memcmp(writeData, readData, PAGE_SIZE) == 0;
+    
     if (!match)
     {
         for (uint16_t i = 0; i < PAGE_SIZE; i++)
         {
-            if (writeData[i] != readData[i])
+            if (writeData[i] == readData[i])
+            {
+                sprintf(logBuffer, "[APP] ___MATCH at %u: wrote %02X, read %02X\r\n",
+                        i, writeData[i], readData[i]);
+                SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
+                while(SERCOM2_USART_WriteIsBusy() == true);
+//                break;
+            }
+            else //if (writeData[i] != readData[i])
             {
                 sprintf(logBuffer, "[APP] MISMATCH at %u: wrote %02X, read %02X\r\n",
                         i, writeData[i], readData[i]);
                 SERCOM2_USART_Write(logBuffer, strlen(logBuffer));
-                break;
+                while(SERCOM2_USART_WriteIsBusy() == true);
+//                break;
             }
         }
     }
