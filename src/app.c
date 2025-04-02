@@ -53,7 +53,7 @@ void qspi_memory_write_enable(void)
         .addr_len = ADDRL_24_BIT
     };
 
-    QSPI_CommandWrite(&writeEnable, 0, 0);
+    QSPI_CommandWrite(&writeEnable, 0);
 }
 
 // --- Read Status Register ---
@@ -95,7 +95,8 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
     };
 
     qspi_memory_write_enable();
-    QSPI_MemoryWrite(&writeTransfer, data, length, address);
+
+    QSPI_MemoryWrite(&writeTransfer, (uint32_t *)data, (uint32_t)length, address);
 }
 
 // --- Memory Read ---
@@ -112,7 +113,7 @@ void qspi_memory_read_example(uint32_t address, uint8_t *buffer, size_t length)
         .dummy_cycles = 8
     };
 
-    QSPI_MemoryRead(&readTransfer, buffer, length, address);
+    QSPI_MemoryRead(&readTransfer, (uint32_t *)buffer, (uint32_t)length, address);
 }
 
 // --- Main Test Function ---
