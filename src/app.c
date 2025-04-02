@@ -124,10 +124,14 @@ void qspi_memory_write_page(uint32_t address, uint8_t *data, size_t length)
     while(SERCOM2_USART_WriteIsBusy() == true);
     QSPI_MemoryWrite(&writeXfer, (uint32_t *)data, (uint32_t)length, address);
     qspi_wait_for_write_complete();
-    
-    // Log the QSPI status register after write completes.
+
+    // Optionally add a small delay (e.g., a few ms) to let the flash settle.
+    for (volatile int i = 0; i < 3000000; i++) { __asm__ __volatile__("nop"); }
+
+    // Log the QSPI status register after programming.
     log_qspi_status();
 }
+
 
 // --- Memory Read ---
 void qspi_memory_read(uint32_t address, uint8_t *buffer, size_t length)
